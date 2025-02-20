@@ -204,6 +204,7 @@
 		5E45ADF4279DA63D004AB972 /* StubbingAsyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E45ADF3279DA63D004AB972 /* StubbingAsyncTests.swift */; };
 		5E45ADF7279DB9A9004AB972 /* AsyncMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E45ADF5279DB949004AB972 /* AsyncMethods.swift */; };
 		8356225C26A94CBE005CD5C5 /* TargetDescriptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8356225B26A94CBE005CD5C5 /* TargetDescriptionTests.swift */; };
+		8BBFA0E22D66825000D4A798 /* SwiftSyntaxParser in Frameworks */ = {isa = PBXBuildFile; productRef = 8BBFA0E12D66825000D4A798 /* SwiftSyntaxParser */; };
 		D314ED7F24CE1C10000CC23D /* GenericsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D314ED7E24CE1C10000CC23D /* GenericsTests.swift */; };
 		D3643B6C247B78A5002DF069 /* Function.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3643B6B247B78A4002DF069 /* Function.swift */; };
 		D3643B72247C5107002DF069 /* String+Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3643B71247C5107002DF069 /* String+Components.swift */; };
@@ -1076,6 +1077,7 @@
 			files = (
 				285C8E0D277A87A200DE525A /* MockingbirdCommon.framework in Frameworks */,
 				287F852525194EF5007D135D /* SourceKittenFramework in Frameworks */,
+				8BBFA0E22D66825000D4A798 /* SwiftSyntaxParser in Frameworks */,
 				287F852E25195011007D135D /* XcodeProj in Frameworks */,
 				287F852225194E16007D135D /* SwiftSyntax in Frameworks */,
 			);
@@ -2274,6 +2276,7 @@
 				287F852125194E16007D135D /* SwiftSyntax */,
 				287F852425194EF5007D135D /* SourceKittenFramework */,
 				287F852D25195011007D135D /* XcodeProj */,
+				8BBFA0E12D66825000D4A798 /* SwiftSyntaxParser */,
 			);
 			productName = MockingbirdGenerator;
 			productReference = "Mockingbird::MockingbirdGenerator::Product" /* MockingbirdGenerator.framework */;
@@ -2984,6 +2987,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D372A597245586DD0000E80A /* MockingbirdCli-Profile.xcconfig */;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 12;
 			};
 			name = Profile;
 		};
@@ -2998,6 +3002,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D372A593245586DD0000E80A /* MockingbirdGenerator-Profile.xcconfig */;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 12;
 			};
 			name = Profile;
 		};
@@ -3162,6 +3167,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 285C8DFE2779E4BB00DE525A /* MockingbirdCommon.xcconfig */;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 11;
 			};
 			name = Debug;
 		};
@@ -3169,6 +3175,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 285C8DFE2779E4BB00DE525A /* MockingbirdCommon.xcconfig */;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 11;
 			};
 			name = Release;
 		};
@@ -3176,6 +3183,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 285C8DFE2779E4BB00DE525A /* MockingbirdCommon.xcconfig */;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 11;
 			};
 			name = Profile;
 		};
@@ -3425,6 +3433,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D372A596245586DD0000E80A /* MockingbirdCli.xcconfig */;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 12;
 			};
 			name = Debug;
 		};
@@ -3432,6 +3441,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D372A596245586DD0000E80A /* MockingbirdCli.xcconfig */;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 12;
 			};
 			name = Release;
 		};
@@ -3453,6 +3463,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D372A594245586DD0000E80A /* MockingbirdGenerator.xcconfig */;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 12;
 			};
 			name = Debug;
 		};
@@ -3460,6 +3471,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D372A594245586DD0000E80A /* MockingbirdGenerator.xcconfig */;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 12;
 			};
 			name = Release;
 		};
@@ -3659,23 +3671,23 @@
 		};
 		287F852025194E16007D135D /* XCRemoteSwiftPackageReference "swift-syntax" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-syntax.git";
+			repositoryURL = "https://github.com/swiftlang/swift-syntax";
 			requirement = {
 				kind = exactVersion;
-				version = 0.50500.0;
+				version = 508.0.0;
 			};
 		};
 		287F852325194EF5007D135D /* XCRemoteSwiftPackageReference "SourceKitten" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/jpsim/SourceKitten.git";
+			repositoryURL = "https://github.com/jpsim/SourceKitten";
 			requirement = {
 				kind = exactVersion;
-				version = 0.31.1;
+				version = 0.33.0;
 			};
 		};
 		287F852625194F2A007D135D /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
 			requirement = {
 				kind = exactVersion;
 				version = 0.9.14;
@@ -3683,7 +3695,7 @@
 		};
 		287F852925194FEA007D135D /* XCRemoteSwiftPackageReference "XcodeProj" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/tuist/XcodeProj.git";
+			repositoryURL = "https://github.com/tuist/XcodeProj";
 			requirement = {
 				kind = exactVersion;
 				version = 8.7.1;
@@ -3691,10 +3703,10 @@
 		};
 		28874F8926BF12DD00097529 /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-argument-parser.git";
+			repositoryURL = "https://github.com/apple/swift-argument-parser";
 			requirement = {
 				kind = exactVersion;
-				version = 1.0.2;
+				version = 1.1.3;
 			};
 		};
 		28E2A56B277E8F43002975B3 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
@@ -3765,6 +3777,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 28E2A56D277E8F43002975B3 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
 			productName = ArgumentParser;
+		};
+		8BBFA0E12D66825000D4A798 /* SwiftSyntaxParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 287F852025194E16007D135D /* XCRemoteSwiftPackageReference "swift-syntax" */;
+			productName = SwiftSyntaxParser;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

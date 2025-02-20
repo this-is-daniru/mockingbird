@@ -78,16 +78,9 @@ extension Path {
     }
     
     let write: (String) throws -> Void = { contents in
-      let rawData = contents.utf8CString
-      let count = rawData.count-1 // Last character is a `Nul` character in a C string.
-      guard count > 0, let data = rawData.withUnsafeBytes({
-        $0.bindMemory(to: UInt8.self).baseAddress
-      }) else { throw WriteUtf8StringFailure.dataEncodingFailure }
-      
-      let written = outputStream.write(data, maxLength: count)
-      guard written == count else {
-        throw WriteUtf8StringFailure.streamWritingFailure(error: outputStream.streamError)
-      }
+        if let data = contents.data(using: .utf8) {
+            outputStream.write(data)
+        }
     }
     
     var writePartial: ((PartialFileContent) throws -> Void)!
@@ -123,4 +116,13 @@ extension Path {
     FileManager.default.delegate = FileManagerMoveDelegate.shared
     _ = try FileManager.default.moveItem(at: tmpFileURL, to: outputFileURL)
   }
+}
+
+extension OutputStream {
+    func write(_ data: Data) -> Int {
+        return data.withUnsafeBytes({ (rawBufferPointer: UnsafeRawBufferPointer) -> Int in
+            let bufferPointer = rawBufferPointer.bindMemory(to: UInt8.self)
+            return self.write(bufferPointer.baseAddress!, maxLength: data.count)
+        })
+    }
 }
