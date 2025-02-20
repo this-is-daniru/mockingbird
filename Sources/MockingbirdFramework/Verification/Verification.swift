@@ -74,98 +74,41 @@ public func verify<ReturnType>(
 
 /// An intermediate object used for verifying declarations returned by `verify`.
 public class VerificationManager<InvocationType, ReturnType> {
-  let context: Context
-  let invocation: Invocation
-  let sourceLocation: SourceLocation
+    let context: Context
+    let invocation: Invocation
+    let sourceLocation: SourceLocation
 
-  init<DeclarationType>(with declaration: Mockable<DeclarationType, InvocationType, ReturnType>,
-                        at sourceLocation: SourceLocation) {
-    self.context = declaration.context
-    self.invocation = declaration.invocation
-    self.sourceLocation = sourceLocation
+    init<DeclarationType>(with declaration: Mockable<DeclarationType, InvocationType, ReturnType>,
+                          at sourceLocation: SourceLocation) {
+        self.context = declaration.context
+        self.invocation = declaration.invocation
+        self.sourceLocation = sourceLocation
   }
 
-  init(from record: InvocationRecord, at sourceLocation: SourceLocation) {
-    self.context = record.context
-    self.invocation = record.invocation
-    self.sourceLocation = sourceLocation
-  }
-
-  /// Verify that the mock received the invocation some number of times using a count matcher.
-  ///
-  /// - Parameter countMatcher: A count matcher defining the number of invocations to verify.
-  public func wasCalled(_ countMatcher: CountMatcher) {
-    verify(using: countMatcher, for: sourceLocation)
-  }
-
-  /// Verify that the mock received the invocation an exact number of times.
-  ///
-  /// - Parameter times: The exact number of invocations expected.
-  public func wasCalled(_ times: Int = once) {
-    verify(using: exactly(times), for: sourceLocation)
-  }
-
-  /// Verify that the mock never received the invocation.
-  public func wasNeverCalled() {
-    verify(using: exactly(never), for: sourceLocation)
-  }
-
-  /// Disambiguate methods overloaded by return type.
-  ///
-  /// Declarations for methods overloaded by return type cannot type inference and should be
-  /// disambiguated.
-  ///
-  /// ```swift
-  /// protocol Bird {
-  ///   func fetchMessage<T>() throws -> T    // Overloaded generically
-  ///   func fetchMessage() throws -> String  // Overloaded explicitly
-  ///   func fetchMessage() throws -> Data
-  /// }
-  ///
-  /// verify(bird.fetchMessage())
-  ///   .returning(String.self)
-  ///   .wasCalled()
-  /// ```
-  ///
-  /// - Parameter type: The return type of the declaration to verify.
-  public func returning(_ type: ReturnType.Type = ReturnType.self) -> Self {
-    return self
-  }
-
-  /// Runs the block within an attributed `DispatchQueue`.
-  func verify(using countMatcher: CountMatcher, for sourceLocation: SourceLocation) {
-    let expectation = Expectation(countMatcher: countMatcher,
-                                  sourceLocation: sourceLocation,
-                                  group: DispatchQueue.currentExpectationGroup)
-    do {
-      try expect(context.mocking, handled: invocation, using: expectation)
-    } catch {
-      FailTest(String(describing: error),
-               file: expectation.sourceLocation.file,
-               line: expectation.sourceLocation.line)
+    init(from record: InvocationRecord, at sourceLocation: SourceLocation) {
+        self.context = record.context
+        self.invocation = record.invocation
+        self.sourceLocation = sourceLocation
     }
-  }
-}
 
-/// Wraps a call matcher and its call site. Used by verification methods in attributed scopes.
-struct Expectation {
-  let countMatcher: CountMatcher
-  let sourceLocation: SourceLocation
-  let group: ExpectationGroup?
+    /// Verify the number of times that the mock received the invocation.
+    ///
+    /// - Parameter countMatcher: A count matcher defining the number of invocations to verify.
+    public func callCount() -> Int {
+        return invocationCount(context.mocking, handled: invocation)
+    }
 
-  init(countMatcher: CountMatcher,
-       sourceLocation: SourceLocation,
-       group: ExpectationGroup?) {
-    self.countMatcher = countMatcher
-    self.sourceLocation = sourceLocation
-    self.group = group
-  }
+    /// Verify that the mock received the invocation some number of times.
+    ///
+    /// - Parameter times: An optional number to verify against actual call count. Default value: 1
+    public func wasCalled(times: Int = 1) -> Bool {
+        return callCount() == times
+    }
 
-  init(from other: Expectation, withGroup: Bool = false) {
-    self.init(countMatcher: other.countMatcher,
-              sourceLocation: other.sourceLocation,
-              group: withGroup ? other.group : nil)
-  }
+    /// - Parameter type: The return type of the declaration to verify.
+    public func returning(_ type: ReturnType.Type = ReturnType.self) -> Self {
+        return self
+    }
 }
 
 /// Filters recorded invocations by upper and lower invocation bounds.
@@ -188,20 +131,11 @@ func findInvocations(in mockingContext: MockingContext,
     })
 }
 
-/// Used by generated mocks to verify invocations with a call matcher.
 @discardableResult
-func expect(_ mockingContext: MockingContext,
+func invocationCount(_ mockingContext: MockingContext,
             handled invocation: Invocation,
-            using expectation: Expectation,
             before nextInvocation: Invocation? = nil,
-            after baseInvocation: Invocation? = nil) throws -> [Invocation] {
-  if let group = expectation.group {
-    group.addExpectation(mockingContext: mockingContext,
-                         invocation: invocation,
-                         expectation: Expectation(from: expectation))
-    return []
-  }
-
+            after baseInvocation: Invocation? = nil) -> Int {
   let allInvocations = findInvocations(in: mockingContext,
                                        with: invocation.selectorName,
                                        before: nextInvocation,
@@ -209,9 +143,5 @@ func expect(_ mockingContext: MockingContext,
   let allMatchingInvocations = allInvocations.filter({ $0.isEqual(to: invocation) })
 
   let actualCallCount = allMatchingInvocations.count
-  guard !expectation.countMatcher.matches(actualCallCount) else { return allInvocations }
-  throw TestFailure.incorrectInvocationCount(invocationCount: actualCallCount,
-                                             invocation: invocation,
-                                             countMatcher: expectation.countMatcher,
-                                             allInvocations: allInvocations)
+    return actualCallCount
 }

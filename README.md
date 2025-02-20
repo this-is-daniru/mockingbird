@@ -35,8 +35,8 @@ verify(bird.fly()).wasCalled()
 ```swift
         .binaryTarget(
             name: "MockingbirdBinary",
-            url: "https://github.com/this-is-daniru/mockingbird/releases/download/0.20.0n/mockingbird-0.20.0n.artifactbundle.zip",
-            checksum: "bc7162c9b68df4bebcfdbef29dd77f0eef06c94d50f0922ee85bf34ad1b2994c"
+            url: "https://github.com/this-is-daniru/mockingbird/releases/download/0.21.0/mockingbird-0.21.0.artifactbundle.zip",
+            checksum: "1320af29c4426673f6d2eae5f0dab946c784483f79c96b5778065535d9dad810"
         ),
         .plugin(
             name: "GenerateMocks",
@@ -80,7 +80,8 @@ struct GenerateMocks: CommandPlugin {
         try verifyResult(
             from: process,
             target: target,
-            errorMessage: "Failed to prepare package description for"
+            successMessage: "Generated package description",
+            errorMessage: "Failed to prepare package description"
         )
     }
 
@@ -106,13 +107,19 @@ struct GenerateMocks: CommandPlugin {
         try verifyResult(
             from: process,
             target: target,
+            successMessage: "Generated mocks",
             errorMessage: "Failed to generate mocks"
         )
     }
 
-    func verifyResult(from process: Process, target: Target, errorMessage: String) throws {
+    func verifyResult(
+        from process: Process,
+        target: Target,
+        successMessage: String,
+        errorMessage: String
+    ) throws {
         if process.terminationReason == .exit && process.terminationStatus == 0 {
-            print("Generated mocks for \(target.name).")
+            print("\(successMessage) for \(target.name).")
         } else {
             let problem = "\(process.terminationReason):\(process.terminationStatus)"
             throw "\(errorMessage) for \(target.name).\n\(problem)"
@@ -123,13 +130,12 @@ struct GenerateMocks: CommandPlugin {
 extension String: @retroactive LocalizedError {
     public var errorDescription: String? { self }
 }
-
 ```
 
 ## Building the executable binary
 
 ```console
-swift build --product mockingbird --configuration release
+MKB_BUILD_EXECUTABLES=1 swift build --product mockingbird --configuration release
 ```
 
 ## Checksum
@@ -137,7 +143,7 @@ swift build --product mockingbird --configuration release
 ```console
 cd mockingbird
 touch Package.swift
-swift package compute-checksum mockingbird-0.20.0n.artifactbundle.zip
+swift package compute-checksum mockingbird-0.21.0.artifactbundle.zip
 ```
 
 ## License

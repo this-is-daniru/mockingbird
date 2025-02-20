@@ -2,7 +2,7 @@ import Foundation
 import MockingbirdCommon
 import PathKit
 import SwiftSyntax
-import SwiftSyntaxParser
+import SwiftParser
 
 public class FindMockedTypesOperation: BasicOperation {
   public class Result {
@@ -78,9 +78,9 @@ private class ParseTestFileOperation: BasicOperation {
       return
     }
     
-    let file = try sourcePath.path.getFile()
-    let sourceFile = try SyntaxParser.parse(source: file.contents)
-    let parser = TestFileParser().parse(sourceFile)
+      let file = try sourcePath.path.getFile()
+      let sourceFile = Parser.parse(source: file.contents)
+      let parser = TestFileParser(viewMode: .sourceAccurate).parse(sourceFile)
     retainForever(parser)
     result.mockedTypeNames = parser.mockedTypeNames
       log("Parsed \(self.result.mockedTypeNames.count) referenced mock type\(self.result.mockedTypeNames.count != 1 ? "s" : "") in \(self.sourcePath.path.absolute())")

@@ -58,3 +58,23 @@ extension DispatchQueue {
     return DispatchQueue.getSpecific(key: ExpectationGroup.contextKey)
   }
 }
+
+struct Expectation {
+    let countMatcher: CountMatcher
+    let sourceLocation: SourceLocation
+    let group: ExpectationGroup?
+
+    init(countMatcher: CountMatcher,
+         sourceLocation: SourceLocation,
+         group: ExpectationGroup?) {
+        self.countMatcher = countMatcher
+        self.sourceLocation = sourceLocation
+        self.group = group
+    }
+
+    init(from other: Expectation, withGroup: Bool = false) {
+      self.init(countMatcher: other.countMatcher,
+                sourceLocation: other.sourceLocation,
+                group: withGroup ? other.group : nil)
+    }
+}

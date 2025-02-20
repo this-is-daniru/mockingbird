@@ -3,7 +3,7 @@ import MockingbirdCommon
 import PathKit
 import SourceKittenFramework
 import SwiftSyntax
-import SwiftSyntaxParser
+import SwiftParser
 
 class ParseSingleFileOperation: BasicOperation {
   class Result {
@@ -98,13 +98,13 @@ class ParseSwiftSyntaxOperation: BasicOperation {
   
   override func run() throws {
     // File reading is not shared with the parse SourceKit operation, but parsing >> reading.
-    let file = try sourcePath.path.getFile()
-    let sourceFile = try SyntaxParser.parse(source: file.contents)
-    let parser = SourceFileAuxiliaryParser(with: {
-      SourceLocationConverter(file: "\(self.sourcePath.path)", tree: sourceFile)
-    }).parse(sourceFile)
-    retainForever(parser)
-    
+      let file = try sourcePath.path.getFile()
+      let sourceFile = Parser.parse(source: file.contents)
+      let parser = SourceFileAuxiliaryParser(with: {
+          SourceLocationConverter(file: "\(self.sourcePath.path)", tree: sourceFile)
+      }).parse(sourceFile)
+      retainForever(parser)
+
     // All Swift files implicitly import the Swift standard library.
     result.importDeclarations = parser.importedPaths.union([ImportDeclaration("Swift")])
     result.compilationDirectives = parser.directives.sorted()

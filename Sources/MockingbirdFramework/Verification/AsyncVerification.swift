@@ -100,3 +100,31 @@ func createAsyncContext(expectation: XCTestExpectation, block scope: () -> Void)
 
   try? group.verify()
 }
+
+/// Used by generated mocks to verify invocations with a call matcher.
+@discardableResult
+func expect(_ mockingContext: MockingContext,
+            handled invocation: Invocation,
+            using expectation: Expectation,
+            before nextInvocation: Invocation? = nil,
+            after baseInvocation: Invocation? = nil) throws -> [Invocation] {
+  if let group = expectation.group {
+    group.addExpectation(mockingContext: mockingContext,
+                         invocation: invocation,
+                         expectation: Expectation(from: expectation))
+    return []
+  }
+
+  let allInvocations = findInvocations(in: mockingContext,
+                                       with: invocation.selectorName,
+                                       before: nextInvocation,
+                                       after: baseInvocation)
+  let allMatchingInvocations = allInvocations.filter({ $0.isEqual(to: invocation) })
+
+  let actualCallCount = allMatchingInvocations.count
+  guard !expectation.countMatcher.matches(actualCallCount) else { return allInvocations }
+  throw TestFailure.incorrectInvocationCount(invocationCount: actualCallCount,
+                                             invocation: invocation,
+                                             countMatcher: expectation.countMatcher,
+                                             allInvocations: allInvocations)
+}
